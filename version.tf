@@ -4,15 +4,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.7"
-    }
   }
 
   backend "s3" {
-    bucket  = "grababyte-tfstate"
-    key     = "convertr/convertr.tfstate"
+    bucket  = "grababyte-eks"
+    key     = "tfstate"
     region  = "eu-west-2"
     encrypt = true
   }

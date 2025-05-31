@@ -1,0 +1,73 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions: write-all
+
+jobs:
+  lint:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/terraformLint.yml@0.14.0
+    with:
+      terraformPath: .
+  validate:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/terraformValidate.yml@0.14.0
+    secrets:
+      account: ${{ secrets.AWS_ACCOUNT }}
+      role: ${{ secrets.AWS_ROLE }}
+    with:
+      region: eu-west-2
+      terraformPath: .
+    needs: [lint]
+  scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/terraformScan.yml@0.14.0
+    with:
+      terraformPath: .
+    needs: [lint,validate]
+  plan:
+    strategy:
+      matrix:
+        workspaces: [development, pre-production, production]
+    uses: GrabAByte/github-devops-workflows/.github/workflows/terraformPlan.yml@0.14.0
+    secrets:
+      account: ${{ secrets.AWS_ACCOUNT }}
+      role: ${{ secrets.AWS_ROLE }}
+    with:
+      region: eu-west-2
+      terraformPath: .
+      workspace: ${{ matrix.workspaces }}
+    needs: [lint,validate,scan]
+  #apply:
+  #  if: github.ref == 'refs/heads/main'
+  #  strategy:
+  #    matrix:
+  #      workspaces: [development]
+  #  uses: GrabAByte/github-devops-workflows/.github/workflows/terraformApply.yml@0.14.0
+  #  secrets:
+  #    account: ${{ secrets.AWS_ACCOUNT }}
+  #    role: ${{ secrets.AWS_ROLE }}
+  #  with:
+  #    region: eu-west-2
+  #    terraformPath: .
+  #    workspace: ${{ matrix.workspaces }}
+  #  needs: [lint,validate,scan,plan]
+  #destroy:
+  #  if: github.ref == 'refs/heads/main'
+  #  strategy:
+  #    matrix:
+  #      workspaces: [development]
+  #  uses: GrabAByte/github-devops-workflows/.github/workflows/terraformDestroy.yml@0.14.0
+  #  secrets:
+  #    account: ${{ secrets.AWS_ACCOUNT }}
+  #    role: ${{ secrets.AWS_ROLE }}
+  #  with:
+  #    region: eu-west-2
+  #    terraformPath: .
+  #    workspace: ${{ matrix.workspaces }}
+  #  needs: [lint,validate,scan,plan,apply]
+  semantic-release:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/semanticRelease.yml@0.14.0
+    needs: [lint,validate,scan,plan,apply,destroy]
