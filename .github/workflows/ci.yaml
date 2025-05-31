@@ -70,4 +70,4 @@ jobs:
   #  needs: [lint,validate,scan,plan,apply]
   semantic-release:
     uses: GrabAByte/github-devops-workflows/.github/workflows/semanticRelease.yml@0.14.0
-    needs: [lint,validate,scan,plan,apply,destroy]
+    needs: [lint,validate,scan,plan]
