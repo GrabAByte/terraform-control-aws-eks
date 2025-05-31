@@ -10,7 +10,6 @@ module "vpc" {
   version = "5.8.1"
 
   name = "grababyte-vpc"
-
   cidr = "10.1.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
 
