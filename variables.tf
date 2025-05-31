@@ -20,6 +20,6 @@ locals {
 
   tags = {
     environment = local.environment
-    project     = "api-lambda-trigger-to-s3"
+    project     = "eks"
   }
 }
