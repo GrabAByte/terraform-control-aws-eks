@@ -1,0 +1,10 @@
+repos:
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "v0.20.0"
+    hooks:
+      - id: terraform-docs-go
+        args: ["markdown", "table", "--output-file", "docs/README.md", "./"]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: "v1.99.0"
+    hooks:
+      - id: terraform_fmt
